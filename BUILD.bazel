@@ -1,8 +1,26 @@
 load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
 load("@protobuf//bazel:proto_library.bzl", "proto_library")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_import", "cc_library")
+load("//:static_library.bzl", "merged_static_library")
 
 package(default_visibility = ["//visibility:public"])
+
+platform(
+    name = "ios_arm64",
+    constraint_values = [
+        "@platforms//os:ios",
+        "@platforms//cpu:arm64",
+    ],
+)
+
+platform(
+    name = "ios_sim_arm64",
+    constraint_values = [
+        "@platforms//os:ios",
+        "@platforms//cpu:arm64",
+        "@apple_support//constraints:simulator",
+    ],
+)
 
 proto_library(
     name = "sparrowhawk_configuration_proto",
@@ -178,6 +196,11 @@ cc_import(
     name = "normalizer_so",
     hdrs = ["src/includes/normalizer.h"],
     shared_library = ":libnormalizer.so",
+)
+
+merged_static_library(
+    name = "sparrowhawk_static",
+    deps = [":normalizer_lib"],
 )
 
 cc_binary(
