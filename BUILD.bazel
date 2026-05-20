@@ -198,9 +198,18 @@ cc_import(
     shared_library = ":libnormalizer.so",
 )
 
+cc_library(
+    name = "sparrowhawk_wrapper_lib",
+    srcs = ["src/lib/sparrowhawk_wrapper.cc"],
+    hdrs = ["src/include/sparrowhawk/sparrowhawk_wrapper.h"],
+    includes = ["src/include"],
+    strip_include_prefix = "src/include",
+    deps = [":normalizer_lib"],
+)
+
 merged_static_library(
     name = "sparrowhawk_static",
-    deps = [":normalizer_lib"],
+    deps = [":sparrowhawk_wrapper_lib"],
 )
 
 cc_binary(

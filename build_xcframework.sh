@@ -3,11 +3,16 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 OUT="$SCRIPT_DIR/output"
-HEADERS="$SCRIPT_DIR/src/include"
 XCFRAMEWORK="$OUT/Sparrowhawk.xcframework"
+
+PUBLIC_HEADERS="$OUT/public_headers"
 
 rm -rf "$OUT"
 mkdir -p "$OUT/macos_arm64" "$OUT/ios_arm64" "$OUT/ios_sim_arm64"
+
+# Only expose the clean wrapper header — no transitive dep headers needed
+mkdir -p "$PUBLIC_HEADERS/sparrowhawk"
+cp "$SCRIPT_DIR/src/include/sparrowhawk/sparrowhawk_wrapper.h" "$PUBLIC_HEADERS/sparrowhawk/"
 
 echo "==> Building macOS arm64..."
 bazel build //:sparrowhawk_static
@@ -28,9 +33,9 @@ cp bazel-bin/libsparrowhawk_static.a "$OUT/ios_sim_arm64/"
 echo "==> Creating XCFramework..."
 rm -rf "$XCFRAMEWORK"
 xcodebuild -create-xcframework \
-  -library "$OUT/macos_arm64/libsparrowhawk_static.a" -headers "$HEADERS" \
-  -library "$OUT/ios_arm64/libsparrowhawk_static.a" -headers "$HEADERS" \
-  -library "$OUT/ios_sim_arm64/libsparrowhawk_static.a" -headers "$HEADERS" \
+  -library "$OUT/macos_arm64/libsparrowhawk_static.a" -headers "$PUBLIC_HEADERS" \
+  -library "$OUT/ios_arm64/libsparrowhawk_static.a" -headers "$PUBLIC_HEADERS" \
+  -library "$OUT/ios_sim_arm64/libsparrowhawk_static.a" -headers "$PUBLIC_HEADERS" \
   -output "$XCFRAMEWORK"
 
 echo "==> Done: $XCFRAMEWORK"
