@@ -1,7 +1,6 @@
 load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
 load("@protobuf//bazel:proto_library.bzl", "proto_library")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_import", "cc_library")
-load("//:static_library.bzl", "merged_static_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -239,7 +238,7 @@ cc_library(
     deps = [":normalizer_lib"],
 )
 
-merged_static_library(
+cc_static_library(
     name = "sparrowhawk_static",
     deps = [":sparrowhawk_wrapper_lib"],
 )
