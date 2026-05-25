@@ -42,19 +42,22 @@ build_slice() {
     case "$SLICE" in
         macos-arm64)
             echo "==> Building macOS arm64..."
-            bazel build //:sparrowhawk_static
+            bazel build //:sparrowhawk_static \
+                --macos_minimum_os=12.0
             ;;
         ios-arm64)
             echo "==> Building iOS arm64..."
             bazel build //:sparrowhawk_static \
                 --platforms=//:ios_arm64 \
-                --apple_platform_type=ios
+                --apple_platform_type=ios \
+                --ios_minimum_os=15.0
             ;;
         iossim-arm64)
             echo "==> Building iOS simulator arm64..."
             bazel build //:sparrowhawk_static \
                 --platforms=//:ios_sim_arm64 \
-                --apple_platform_type=ios
+                --apple_platform_type=ios \
+                --ios_minimum_os=15.0
             ;;
     esac
 
